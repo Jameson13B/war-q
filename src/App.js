@@ -1,25 +1,40 @@
 import { useState } from 'react'
 import { Button } from 'antd'
 
+import { Battle } from './views/Battle'
 import { Builder } from './views/Builder'
 import { Home } from './views/Home'
 import { Instructions } from './views/Instructions'
+import { Summary } from './views/Summary'
 
-const VIEWS = { BUILDER: 'BUILDER', HOME: 'HOME', INSTRUCTIONS: 'INSTRUCTIONS' }
+const VIEWS = {
+  BATTLE: 'BATTLE',
+  BUILDER: 'BUILDER',
+  HOME: 'HOME',
+  INSTRUCTIONS: 'INSTRUCTIONS',
+  SUMMARY: 'SUMMARY',
+}
 
 function App() {
   const [currentView, setCurrentView] = useState(VIEWS.HOME)
   const styles = getStyles()
+
   return (
     <div style={styles.app}>
       <div style={styles.header}>
         <h1 style={styles.title}>War Q</h1>
 
-        <Button onClick={() => setCurrentView(VIEWS.HOME)}>Home</Button>
+        {currentView !== VIEWS.HOME && (
+          <Button onClick={() => setCurrentView(VIEWS.HOME)}>Home</Button>
+        )}
       </div>
 
+      {currentView === VIEWS.BATTLE && (
+        <Battle handleDoneClick={() => setCurrentView(VIEWS.SUMMARY)} />
+      )}
+
       {currentView === VIEWS.BUILDER && (
-        <Builder handleReadyClick={() => setCurrentView(VIEWS.HOME)} />
+        <Builder handleReadyClick={() => setCurrentView(VIEWS.BATTLE)} />
       )}
 
       {currentView === VIEWS.HOME && (
@@ -31,6 +46,13 @@ function App() {
 
       {currentView === VIEWS.INSTRUCTIONS && (
         <Instructions handleClose={() => setCurrentView(VIEWS.HOME)} />
+      )}
+
+      {currentView === VIEWS.SUMMARY && (
+        <Summary
+          handleGoToHome={() => setCurrentView(VIEWS.HOME)}
+          handleReadyUp={() => setCurrentView(VIEWS.BUILDER)}
+        />
       )}
     </div>
   )
