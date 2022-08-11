@@ -6,6 +6,7 @@ import { Builder } from './views/Builder'
 import { Home } from './views/Home'
 import { Instructions } from './views/Instructions'
 import { Summary } from './views/Summary'
+import { User } from './views/User'
 
 const VIEWS = {
   BATTLE: 'BATTLE',
@@ -13,6 +14,7 @@ const VIEWS = {
   HOME: 'HOME',
   INSTRUCTIONS: 'INSTRUCTIONS',
   SUMMARY: 'SUMMARY',
+  USER: 'USER',
 }
 
 function App() {
@@ -54,6 +56,8 @@ function App() {
           handleReadyUp={() => setCurrentView(VIEWS.BUILDER)}
         />
       )}
+
+      {currentView === VIEWS.USER && <User />}
     </div>
   )
 }
