@@ -44,37 +44,37 @@ export const Builder = (props) => {
             {role}
           </h3>
           <Button
-            active={role === 'Shield'}
             onClick={() => handleSelectRole('Shield', index)}
-            style={styles.button}
+            style={styles.roleButton}
+            type={role === 'Shield' ? 'primary' : 'default'}
           >
             S
           </Button>
           <Button
-            active={role === 'Fighter'}
             onClick={() => handleSelectRole('Fighter', index)}
-            style={styles.button}
+            style={styles.roleButton}
+            type={role === 'Fighter' ? 'primary' : 'default'}
           >
             F
           </Button>
           <Button
-            active={role === 'Gunner'}
             onClick={() => handleSelectRole('Gunner', index)}
-            style={styles.button}
+            style={styles.roleButton}
+            type={role === 'Gunner' ? 'primary' : 'default'}
           >
             G
           </Button>
           <Button
-            active={role === 'Bomber'}
             onClick={() => handleSelectRole('Bomber', index)}
-            style={styles.button}
+            style={styles.roleButton}
+            type={role === 'Bomber' ? 'primary' : 'default'}
           >
             B
           </Button>
           <Button
-            active={role === 'Tech'}
             onClick={() => handleSelectRole('Tech', index)}
             style={styles.roleButton}
+            type={role === 'Tech' ? 'primary' : 'default'}
           >
             T
           </Button>
