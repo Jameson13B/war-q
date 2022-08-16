@@ -2,11 +2,13 @@ import React, { useReducer } from 'react'
 import { Button } from 'antd'
 import { css } from '@mxenabled/cssinjs'
 
+import { ROLES } from '../const'
+
 export const Builder = (props) => {
   const styles = getStyle()
   const [state, dispatch] = useReducer(reducer, {
-    q: Array(15).fill('?'),
-    remaining: { Shield: 3, Fighter: 3, Gunner: 3, Bomber: 3, Tech: 3 },
+    q: Array(20).fill('?'),
+    remaining: { Tech: 5, Scout: 4, Captain: 3, Major: 2, General: 1, Bomb: 5 },
   })
 
   const handleSelectRole = (role, index) => {
@@ -28,13 +30,26 @@ export const Builder = (props) => {
 
   return (
     <div style={styles.container}>
-      <h2>Build your "Q" here.</h2>
+      <h2>Build your "Q" then select Ready.</h2>
       <div className={css(styles.remaining)}>
-        <h4>Shield: {state.remaining.Shield}</h4>
-        <h4>Fighter: {state.remaining.Fighter}</h4>
-        <h4>Gunner: {state.remaining.Gunner}</h4>
-        <h4>Bomber: {state.remaining.Bomber}</h4>
-        <h4>Tech: {state.remaining.Tech}</h4>
+        <h4 style={styles.remainingLabel}>
+          General: <p>{state.remaining.General}</p>
+        </h4>
+        <h4 style={styles.remainingLabel}>
+          Major: <p>{state.remaining.Major}</p>
+        </h4>
+        <h4 style={styles.remainingLabel}>
+          Captain: <p>{state.remaining.Captain}</p>
+        </h4>
+        <h4 style={styles.remainingLabel}>
+          Scout: <p>{state.remaining.Scout}</p>
+        </h4>
+        <h4 style={styles.remainingLabel}>
+          Tech: <p>{state.remaining.Tech}</p>
+        </h4>
+        <h4 style={styles.remainingLabel}>
+          Bomb: <p>{state.remaining.Bomb}</p>
+        </h4>
       </div>
       <hr />
       {state.q.map((role, index) => (
@@ -44,39 +59,46 @@ export const Builder = (props) => {
             {role}
           </h3>
           <Button
-            onClick={() => handleSelectRole('Shield', index)}
+            onClick={() => handleSelectRole(ROLES.BOMB, index)}
             style={styles.roleButton}
-            type={role === 'Shield' ? 'primary' : 'default'}
-          >
-            S
-          </Button>
-          <Button
-            onClick={() => handleSelectRole('Fighter', index)}
-            style={styles.roleButton}
-            type={role === 'Fighter' ? 'primary' : 'default'}
-          >
-            F
-          </Button>
-          <Button
-            onClick={() => handleSelectRole('Gunner', index)}
-            style={styles.roleButton}
-            type={role === 'Gunner' ? 'primary' : 'default'}
-          >
-            G
-          </Button>
-          <Button
-            onClick={() => handleSelectRole('Bomber', index)}
-            style={styles.roleButton}
-            type={role === 'Bomber' ? 'primary' : 'default'}
+            type={role === ROLES.BOMB ? 'primary' : 'default'}
           >
             B
           </Button>
           <Button
-            onClick={() => handleSelectRole('Tech', index)}
+            onClick={() => handleSelectRole(ROLES.TECH, index)}
             style={styles.roleButton}
-            type={role === 'Tech' ? 'primary' : 'default'}
+            type={role === ROLES.TECH ? 'primary' : 'default'}
           >
             T
+          </Button>
+          <Button
+            onClick={() => handleSelectRole(ROLES.SCOUT, index)}
+            style={styles.roleButton}
+            type={role === ROLES.SCOUT ? 'primary' : 'default'}
+          >
+            S
+          </Button>
+          <Button
+            onClick={() => handleSelectRole(ROLES.CAPTAIN, index)}
+            style={styles.roleButton}
+            type={role === ROLES.CAPTAIN ? 'primary' : 'default'}
+          >
+            C
+          </Button>
+          <Button
+            onClick={() => handleSelectRole(ROLES.MAJOR, index)}
+            style={styles.roleButton}
+            type={role === ROLES.MAJOR ? 'primary' : 'default'}
+          >
+            M
+          </Button>
+          <Button
+            onClick={() => handleSelectRole(ROLES.GENERAL, index)}
+            style={styles.roleButton}
+            type={role === ROLES.GENERAL ? 'primary' : 'default'}
+          >
+            G
           </Button>
         </div>
       ))}
@@ -98,6 +120,14 @@ const getStyle = () => ({
     '& h4': {
       color: 'grey',
     },
+  },
+  remainingLabel: {
+    background: '#f5f5f5',
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+    width: '16%',
   },
   row: {
     display: 'flex',
