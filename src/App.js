@@ -1,12 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from 'antd'
+import dayjs from 'dayjs'
 
+import { getCurrentUser } from './index'
 import { Battle } from './views/Battle'
 import { Builder } from './views/Builder'
 import { Home } from './views/Home'
 import { Instructions } from './views/Instructions'
 import { Summary } from './views/Summary'
 import { User } from './views/User'
+
+const relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
 
 const VIEWS = {
   BATTLE: 'BATTLE',
@@ -19,7 +24,12 @@ const VIEWS = {
 
 function App() {
   const [currentView, setCurrentView] = useState(VIEWS.HOME)
+  const [currentUser, setCurrentUser] = useState(null)
   const styles = getStyles()
+
+  useEffect(() => {
+    getCurrentUser().then((user) => setCurrentUser(user))
+  }, [])
 
   return (
     <div style={styles.app}>
@@ -28,6 +38,11 @@ function App() {
 
         {currentView !== VIEWS.HOME && (
           <Button onClick={() => setCurrentView(VIEWS.HOME)}>Home</Button>
+        )}
+        {currentView === VIEWS.HOME && (
+          <Button onClick={() => setCurrentView(VIEWS.USER)}>
+            {currentUser ? currentUser.attributes.username : 'User'}
+          </Button>
         )}
       </div>
 
