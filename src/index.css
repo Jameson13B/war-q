@@ -13,3 +13,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.window-pane {
+  /* This hides the scroll bar from system.css styles */
+  overflow-y: hidden;
+}
