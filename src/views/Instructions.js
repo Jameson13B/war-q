@@ -1,5 +1,4 @@
 import React from 'react'
-import { Button } from 'antd'
 
 export const Instructions = (props) => {
   const styles = getStyle()
@@ -15,9 +14,9 @@ export const Instructions = (props) => {
       </p>
       <p>Continue to iterate, improve, and strategize to beat your opponent.</p>
 
-      <Button onClick={props.handleClose} type="primary">
-        Close
-      </Button>
+      <button className="btn" onClick={props.handleHome} type="primary">
+        Home
+      </button>
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input } from 'antd'
 import dayjs from 'dayjs'
 import Parse from 'parse/dist/parse.min.js'
 
@@ -59,6 +58,20 @@ export const User = (props) => {
       alert(`Error! ${error.message}`)
     }
   }
+  const onLogin = (e) => {
+    e.preventDefault()
+    if (!loginUsername || !loginPassword) {
+      return alert('Please enter a username and password!')
+    }
+    handleLogin()
+  }
+  const onRegister = (e) => {
+    e.preventDefault()
+    if (!registerUsername || !registerPassword) {
+      return alert('Please enter a username and password!')
+    }
+    handleRegister()
+  }
 
   return (
     <div style={styles.container}>
@@ -68,61 +81,56 @@ export const User = (props) => {
           <p style={styles.joinedLabel}>
             Joined {dayjs(currentUser.createdAt.toISOString()).fromNow()}
           </p>
-          <Button onClick={handleLogout} style={styles.button}>
+          <button className="btn" onClick={handleLogout} style={styles.button}>
             Logout
-          </Button>
+          </button>
         </div>
       )}
       {!currentUser && (
         <React.Fragment>
           <div>
             <h1>Login</h1>
-            <form autoComplete="off">
-              <Input
+            <form autoComplete="off" onSubmit={onLogin}>
+              <input
                 name={Date.now()}
                 onChange={(event) => setLoginUsername(event.target.value)}
                 placeholder="Username"
-                size="large"
                 style={styles.input}
                 value={loginUsername}
               />
-              <Input
+              <input
                 name={Date.now()}
                 onChange={(event) => setLoginPassword(event.target.value)}
                 placeholder="Password"
-                size="large"
                 style={styles.input}
                 value={loginPassword}
               />
-              <Button onClick={handleLogin} style={styles.button} type="primary">
+              <button className="btn" style={styles.button} type="primary">
                 Login
-              </Button>
+              </button>
             </form>
           </div>
           <hr style={styles.divider} />
           <div>
             <h1>Register</h1>
-            <form autoComplete="off">
-              <Input
+            <form autoComplete="off" onSubmit={onRegister}>
+              <input
                 name={Date.now()}
                 onChange={(event) => setRegisterUsername(event.target.value)}
                 placeholder="Username"
-                size="large"
                 style={styles.input}
                 value={registerUsername}
               />
-              <Input
+              <input
                 name={Date.now()}
                 onChange={(event) => setRegisterPassword(event.target.value)}
                 placeholder="Password"
-                size="large"
                 style={styles.input}
-                // type="password"
                 value={registerPassword}
               />
-              <Button onClick={handleRegister} style={styles.button} type="primary">
+              <button className="btn" style={styles.button} type="primary">
                 Register
-              </Button>
+              </button>
             </form>
           </div>
         </React.Fragment>
@@ -139,6 +147,7 @@ const getStyles = () => ({
   },
   input: {
     marginBottom: 20,
+    width: '100%',
   },
   button: {
     width: '100%',

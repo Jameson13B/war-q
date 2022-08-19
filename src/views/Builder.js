@@ -12,14 +12,18 @@ export const Builder = (props) => {
   })
 
   const handleSelectRole = (role, index) => {
-    if (state.remaining[role] < 1) {
-      return alert(`You don't have any ${role}s left!`)
+    if (role === '?') return () => {}
+
+    const formattedRole = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
+
+    if (state.remaining[formattedRole] < 1) {
+      return alert(`You don't have any ${formattedRole}s left!`)
     }
     const currentRole = state.q[index]
     // Update the remaining role count
     const remaining = {
       ...state.remaining,
-      [role]: state.remaining[role] - 1,
+      [formattedRole]: state.remaining[formattedRole] - 1,
       [currentRole]: state.remaining[currentRole] + 1,
     }
     const newQ = [...state.q]
@@ -56,7 +60,7 @@ export const Builder = (props) => {
         <div key={index} style={styles.row}>
           <h3 style={styles.word}>{index + 1}:</h3>
           <h3 onClick={() => handleSelectRole('?', index)} style={styles.word}>
-            {role}
+            {role.slice(0, 3)}
           </h3>
           <Button
             onClick={() => handleSelectRole(ROLES.BOMB, index)}
@@ -116,9 +120,14 @@ const getStyle = () => ({
   container: {},
   remaining: {
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     '& h4': {
       color: 'grey',
+      fontSize: '.8em',
+    },
+    '& p': {
+      margin: 0,
     },
   },
   remainingLabel: {
@@ -127,17 +136,23 @@ const getStyle = () => ({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
-    width: '16%',
+    width: '32%',
   },
   row: {
     display: 'flex',
     justifyContent: 'space-between',
   },
   word: {
+    display: 'flex',
+    alignItems: 'center',
     flexGrow: '1',
+    fontSize: '.8em',
+    marginBottom: '0',
   },
   roleButton: {
+    fontSize: '.8em',
     marginLeft: 5,
+    padding: '4px 13px',
   },
   readyButton: {
     width: '100%',

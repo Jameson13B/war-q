@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Button } from 'antd'
 import dayjs from 'dayjs'
 
 import { getCurrentUser } from './index'
@@ -9,6 +8,8 @@ import { Home } from './views/Home'
 import { Instructions } from './views/Instructions'
 import { Summary } from './views/Summary'
 import { User } from './views/User'
+
+import { Menu } from './components/Menu'
 
 const relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
@@ -31,48 +32,51 @@ function App() {
     getCurrentUser().then((user) => setCurrentUser(user))
   }, [])
 
+  const handleCloseApp = () => {
+    window.close()
+  }
+
   return (
-    <div style={styles.app}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>War Q</h1>
-
-        {currentView !== VIEWS.HOME && (
-          <Button onClick={() => setCurrentView(VIEWS.HOME)}>Home</Button>
-        )}
-        {currentView === VIEWS.HOME && (
-          <Button onClick={() => setCurrentView(VIEWS.USER)}>
-            {currentUser ? currentUser.attributes.username : 'User'}
-          </Button>
-        )}
+    <div className="window" style={styles.app}>
+      <div className="title-bar">
+        <button aria-label="Close" className="close" onClick={handleCloseApp}></button>
+        <h1 className="title">War Q</h1>
+        <button
+          aria-label="Resize"
+          className="resize"
+          onClick={() => alert('This will toggle dark/light mode.')}
+        ></button>
       </div>
+      <Menu
+        onHomeClick={() => setCurrentView(VIEWS.HOME)}
+        onInstructionsClick={() => setCurrentView(VIEWS.INSTRUCTIONS)}
+        onUserClick={() => setCurrentView(VIEWS.USER)}
+        user={currentUser ? currentUser.attributes.username : 'User'}
+      />
+      <div className="window-pane">
+        {currentView === VIEWS.BATTLE && (
+          <Battle handleDoneClick={() => setCurrentView(VIEWS.SUMMARY)} />
+        )}
 
-      {currentView === VIEWS.BATTLE && (
-        <Battle handleDoneClick={() => setCurrentView(VIEWS.SUMMARY)} />
-      )}
+        {currentView === VIEWS.BUILDER && (
+          <Builder handleReadyClick={() => setCurrentView(VIEWS.BATTLE)} />
+        )}
 
-      {currentView === VIEWS.BUILDER && (
-        <Builder handleReadyClick={() => setCurrentView(VIEWS.BATTLE)} />
-      )}
+        {currentView === VIEWS.HOME && <Home handleStart={() => setCurrentView(VIEWS.BUILDER)} />}
 
-      {currentView === VIEWS.HOME && (
-        <Home
-          handleInstructions={() => setCurrentView(VIEWS.INSTRUCTIONS)}
-          handleStart={() => setCurrentView(VIEWS.BUILDER)}
-        />
-      )}
+        {currentView === VIEWS.INSTRUCTIONS && (
+          <Instructions handleHome={() => setCurrentView(VIEWS.HOME)} />
+        )}
 
-      {currentView === VIEWS.INSTRUCTIONS && (
-        <Instructions handleClose={() => setCurrentView(VIEWS.HOME)} />
-      )}
+        {currentView === VIEWS.SUMMARY && (
+          <Summary
+            handleGoToHome={() => setCurrentView(VIEWS.HOME)}
+            handleReadyUp={() => setCurrentView(VIEWS.BUILDER)}
+          />
+        )}
 
-      {currentView === VIEWS.SUMMARY && (
-        <Summary
-          handleGoToHome={() => setCurrentView(VIEWS.HOME)}
-          handleReadyUp={() => setCurrentView(VIEWS.BUILDER)}
-        />
-      )}
-
-      {currentView === VIEWS.USER && <User />}
+        {currentView === VIEWS.USER && <User />}
+      </div>
     </div>
   )
 }
@@ -80,9 +84,10 @@ function App() {
 const getStyles = () => ({
   app: {
     margin: '0 auto',
+    minHeight: '100vh',
     maxWidth: 400,
     minWidth: 320,
-    padding: 15,
+    // padding: 15,
   },
   header: {
     display: 'flex',
