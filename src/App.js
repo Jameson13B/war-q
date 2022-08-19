@@ -10,6 +10,7 @@ import { Summary } from './views/Summary'
 import { User } from './views/User'
 
 import { Menu } from './components/Menu'
+import { TitleBar } from './components/TitleBar'
 
 const relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
@@ -32,21 +33,12 @@ function App() {
     getCurrentUser().then((user) => setCurrentUser(user))
   }, [])
 
-  const handleCloseApp = () => {
-    window.close()
-  }
+  const handleCloseApp = () => alert('Working on having this close the app/window/tab.')
+  const handleToggleDarkMode = () => alert('This will toggle dark/light mode.')
 
   return (
     <div className="window" style={styles.app}>
-      <div className="title-bar">
-        <button aria-label="Close" className="close" onClick={handleCloseApp}></button>
-        <h1 className="title">War Q</h1>
-        <button
-          aria-label="Resize"
-          className="resize"
-          onClick={() => alert('This will toggle dark/light mode.')}
-        ></button>
-      </div>
+      <TitleBar onCloseApp={handleCloseApp} onToggleDarkMode={handleToggleDarkMode} />
       <Menu
         onHomeClick={() => setCurrentView(VIEWS.HOME)}
         onInstructionsClick={() => setCurrentView(VIEWS.INSTRUCTIONS)}
