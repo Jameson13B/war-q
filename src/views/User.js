@@ -1,140 +1,104 @@
 import React, { useEffect, useState } from 'react'
-import dayjs from 'dayjs'
-import Parse from 'parse/dist/parse.min.js'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { getCurrentUser } from '../index'
+import { auth, generateCaptcha, signIn, signOut } from '../Firebase'
+// import dayjs from 'dayjs'
 
 export const User = (props) => {
-  const [loginUsername, setLoginUsername] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
-  const [registerUsername, setRegisterUsername] = useState('')
-  const [registerPassword, setRegisterPassword] = useState('')
-  const [currentUser, setCurrentUser] = useState(null)
+  const [user] = useAuthState(auth)
+  const [showOtp, setShowOtp] = useState(null)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [otpValue, setOtpValue] = useState('')
   const styles = getStyles()
 
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      setCurrentUser(user)
-    })
+    generateCaptcha()
   }, [])
 
-  const handleLogin = async () => {
-    try {
-      const createUser = await Parse.User.logIn(loginUsername, loginPassword)
-      alert(`Success! User ${createUser.getUsername()} was successfully logged in!`)
-
-      const user = await getCurrentUser()
-      setCurrentUser(user)
-      setLoginUsername('')
-      setLoginPassword('')
-    } catch (error) {
-      alert(`Error! ${error}`)
-    }
-  }
-  const handleRegister = async () => {
-    try {
-      const createUser = await Parse.User.signUp(registerUsername, registerPassword)
-      alert(`Success! User ${createUser.getUsername()} was successfully created!`)
-
-      const user = await getCurrentUser()
-      setCurrentUser(user)
-      setRegisterUsername('')
-      setRegisterPassword('')
-    } catch (error) {
-      alert(`Error! ${error}`)
-    }
-  }
-  const handleLogout = async () => {
-    try {
-      await Parse.User.logOut()
-      const currentUser = await Parse.User.current()
-      if (currentUser === null) {
-        alert('Success! No user is logged in anymore!')
-      }
-
-      await getCurrentUser()
-      setCurrentUser(null)
-    } catch (error) {
-      alert(`Error! ${error.message}`)
-    }
-  }
-  const onLogin = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault()
-    if (!loginUsername || !loginPassword) {
-      return alert('Please enter a username and password!')
+    if (!phoneNumber) {
+      return alert('Please enter your phone number.')
     }
-    handleLogin()
+    signIn(phoneNumber)
+      .then((results) => {
+        setPhoneNumber('')
+        setShowOtp(results)
+      })
+      .catch((err) => console.log('err1', err))
   }
-  const onRegister = (e) => {
+
+  const handleOtp = (e) => {
     e.preventDefault()
-    if (!registerUsername || !registerPassword) {
-      return alert('Please enter a username and password!')
+    if (otpValue.length !== 6) {
+      return alert('Please enter the value we sent you.')
     }
-    handleRegister()
+    showOtp
+      .confirm(otpValue)
+      .then((user) => {
+        setOtpValue('')
+        setShowOtp(null)
+      })
+      .catch((err) => console.log('err2', err))
+  }
+
+  const handleLogout = (e) => {
+    e.preventDefault()
+    signOut()
+  }
+
+  if (showOtp) {
+    return (
+      <div style={styles.container}>
+        <h1>Enter code we sent you.</h1>
+        <form autoComplete="off" onSubmit={handleOtp}>
+          <input
+            onChange={(event) => setOtpValue(event.target.value)}
+            placeholder="Password"
+            style={styles.input}
+            value={otpValue}
+          />
+          <button className="btn" style={styles.button} type="primary">
+            Verify Code
+          </button>
+        </form>
+      </div>
+    )
   }
 
   return (
     <div style={styles.container}>
-      {currentUser && (
+      {user && (
         <div>
-          <h2>Welcome {currentUser.attributes.username}</h2>
-          <p style={styles.joinedLabel}>
+          <h2>Welcome {user.phoneNumber}</h2>
+          {/* <p style={styles.joinedLabel}>
             Joined {dayjs(currentUser.createdAt.toISOString()).fromNow()}
-          </p>
+          </p> */}
           <button className="btn" onClick={handleLogout} style={styles.button}>
             Logout
           </button>
         </div>
       )}
-      {!currentUser && (
-        <React.Fragment>
-          <div>
-            <h1>Login</h1>
-            <form autoComplete="off" onSubmit={onLogin}>
-              <input
-                name={Date.now()}
-                onChange={(event) => setLoginUsername(event.target.value)}
-                placeholder="Username"
-                style={styles.input}
-                value={loginUsername}
-              />
-              <input
-                name={Date.now()}
-                onChange={(event) => setLoginPassword(event.target.value)}
-                placeholder="Password"
-                style={styles.input}
-                value={loginPassword}
-              />
-              <button className="btn" style={styles.button} type="primary">
-                Login
-              </button>
-            </form>
-          </div>
-          <hr style={styles.divider} />
-          <div>
-            <h1>Register</h1>
-            <form autoComplete="off" onSubmit={onRegister}>
-              <input
-                name={Date.now()}
-                onChange={(event) => setRegisterUsername(event.target.value)}
-                placeholder="Username"
-                style={styles.input}
-                value={registerUsername}
-              />
-              <input
-                name={Date.now()}
-                onChange={(event) => setRegisterPassword(event.target.value)}
-                placeholder="Password"
-                style={styles.input}
-                value={registerPassword}
-              />
-              <button className="btn" style={styles.button} type="primary">
-                Register
-              </button>
-            </form>
-          </div>
-        </React.Fragment>
+      {!user && (
+        <div>
+          <h1>Login</h1>
+          <form autoComplete="off" onSubmit={handleLogin}>
+            <input
+              onChange={(event) => {
+                event.preventDefault()
+                setPhoneNumber(event.target.value)
+              }}
+              placeholder="Phone number"
+              style={styles.input}
+              value={phoneNumber}
+            />
+            <button className="btn" id="sign-in-button" style={styles.button} type="primary">
+              Send Login Code
+            </button>
+          </form>
+        </div>
       )}
+      <div id="captcha-button" />
     </div>
   )
 }

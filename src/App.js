@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 
-import { getCurrentUser } from './index'
+// import { getCurrentUser } from './index'
 import { Battle } from './views/Battle'
 import { Builder } from './views/Builder'
 import { Home } from './views/Home'
@@ -26,11 +26,11 @@ const VIEWS = {
 
 function App() {
   const [currentView, setCurrentView] = useState(VIEWS.HOME)
-  const [currentUser, setCurrentUser] = useState(null)
+  // const [currentUser, setCurrentUser] = useState(null)
   const styles = getStyles()
 
   useEffect(() => {
-    getCurrentUser().then((user) => setCurrentUser(user))
+    // getCurrentUser().then((user) => setCurrentUser(user))
   }, [])
 
   const handleCloseApp = () => alert('Working on having this close the app/window/tab.')
@@ -43,7 +43,7 @@ function App() {
         onHomeClick={() => setCurrentView(VIEWS.HOME)}
         onInstructionsClick={() => setCurrentView(VIEWS.INSTRUCTIONS)}
         onUserClick={() => setCurrentView(VIEWS.USER)}
-        user={currentUser ? currentUser.attributes.username : 'User'}
+        // user={currentUser ? currentUser.attributes.username : 'User'}
       />
       <div className="window-pane">
         {currentView === VIEWS.BATTLE && (
