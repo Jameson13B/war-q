@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
 import { auth, generateCaptcha, signIn, signOut } from '../Firebase'
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
 export const User = (props) => {
   const [user] = useAuthState(auth)
@@ -71,9 +71,7 @@ export const User = (props) => {
       {user && (
         <div>
           <h2>Welcome {user.phoneNumber}</h2>
-          {/* <p style={styles.joinedLabel}>
-            Joined {dayjs(currentUser.createdAt.toISOString()).fromNow()}
-          </p> */}
+          <p style={styles.joinedLabel}>Joined {dayjs(user.metadata.creationTime).fromNow()}</p>
           <button className="btn" onClick={handleLogout} style={styles.button}>
             Logout
           </button>
