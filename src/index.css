@@ -18,3 +18,8 @@ code {
   /* This hides the scroll bar from system.css styles */
   overflow-y: hidden;
 }
+
+.window-pane::-webkit-scrollbar {
+  background-color: #fff;
+  width: 20px
+}

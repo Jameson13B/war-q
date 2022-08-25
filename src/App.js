@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import dayjs from 'dayjs'
 
-// import { getCurrentUser } from './index'
 import { Battle } from './views/Battle'
 import { Builder } from './views/Builder'
 import { Home } from './views/Home'
@@ -29,20 +28,21 @@ function App() {
   // const [currentUser, setCurrentUser] = useState(null)
   const styles = getStyles()
 
-  useEffect(() => {
-    // getCurrentUser().then((user) => setCurrentUser(user))
-  }, [])
-
-  const handleCloseApp = () => alert('Working on having this close the app/window/tab.')
   const handleToggleDarkMode = () => alert('This will toggle dark/light mode.')
 
   return (
     <div className="window" style={styles.app}>
-      <TitleBar onCloseApp={handleCloseApp} onToggleDarkMode={handleToggleDarkMode} />
+      <TitleBar
+        handleGoHome={() => setCurrentView(VIEWS.HOME)}
+        onToggleDarkMode={handleToggleDarkMode}
+      />
       <Menu
         onHomeClick={() => setCurrentView(VIEWS.HOME)}
         onInstructionsClick={() => setCurrentView(VIEWS.INSTRUCTIONS)}
-        onUserClick={() => setCurrentView(VIEWS.USER)}
+        onUserClick={(e) => {
+          e.preventDefault()
+          setCurrentView(VIEWS.USER)
+        }}
         // user={currentUser ? currentUser.attributes.username : 'User'}
       />
       <div className="window-pane">
@@ -51,7 +51,11 @@ function App() {
         )}
 
         {currentView === VIEWS.BUILDER && (
-          <Builder handleReadyClick={() => setCurrentView(VIEWS.BATTLE)} />
+          <Builder
+            buttonText="Ready"
+            handleReadyClick={() => setCurrentView(VIEWS.BATTLE)}
+            title='Build your "Q" then select Ready.'
+          />
         )}
 
         {currentView === VIEWS.HOME && <Home handleStart={() => setCurrentView(VIEWS.BUILDER)} />}
@@ -76,9 +80,11 @@ function App() {
 const getStyles = () => ({
   app: {
     margin: '0 auto',
+    maxHeight: '100vh',
     minHeight: '100vh',
     maxWidth: 400,
     minWidth: 320,
+    overflow: 'auto',
     // padding: 15,
   },
   header: {

@@ -1,5 +1,10 @@
 import React from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+
+import { auth } from '../Firebase'
+
 export const Home = (props) => {
+  const [user] = useAuthState(auth)
   const styles = getStyle()
 
   return (
@@ -7,7 +12,7 @@ export const Home = (props) => {
       <h2>Welcome to War Q</h2>
       <h3>Best of luck out there.</h3>
       <br />
-      <button className="btn" onClick={props.handleStart} type="primary">
+      <button disabled={!user} className="btn" onClick={props.handleStart} type="primary">
         Start
       </button>
       <br />

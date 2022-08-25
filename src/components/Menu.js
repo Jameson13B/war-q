@@ -31,9 +31,11 @@ export const Menu = (props) => {
           <li role="menu-item" className="divider">
             <a onClick={props.onUserClick}>User{` (${userSecondary()})`}</a>
           </li>
-          <li role="menu-item">
-            <a onClick={() => alert('One More')}>One More</a>
-          </li>
+          {user && (
+            <li role="menu-item">
+              <a onClick={() => alert('Logout')}>Logout</a>
+            </li>
+          )}
         </ul>
       </li>
       <li role="menu-item" tabIndex="0" aria-haspopup="true">

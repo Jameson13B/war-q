@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { auth, generateCaptcha, signIn, signOut } from '../Firebase'
+import { auth, generateCaptcha, signIn } from '../Firebase'
+import { Builder } from './Builder'
 import dayjs from 'dayjs'
 
 export const User = (props) => {
@@ -42,11 +43,6 @@ export const User = (props) => {
       .catch((err) => console.log('err2', err))
   }
 
-  const handleLogout = (e) => {
-    e.preventDefault()
-    signOut()
-  }
-
   if (showOtp) {
     return (
       <div style={styles.container}>
@@ -70,11 +66,13 @@ export const User = (props) => {
     <div style={styles.container}>
       {user && (
         <div>
-          <h2>Welcome {user.phoneNumber}</h2>
+          <h2 style={styles.title}>Welcome {user.phoneNumber.slice(2)}</h2>
           <p style={styles.joinedLabel}>Joined {dayjs(user.metadata.creationTime).fromNow()}</p>
-          <button className="btn" onClick={handleLogout} style={styles.button}>
-            Logout
-          </button>
+          <Builder
+            buttonText="Save"
+            handleReadyClick={() => alert('Save template')}
+            title="Build your template"
+          />
         </div>
       )}
       {!user && (
@@ -103,6 +101,9 @@ export const User = (props) => {
 
 const getStyles = () => ({
   container: {},
+  title: {
+    fontSize: '1.5em',
+  },
   joinedLabel: {
     marginBottom: 10,
     fontStyle: 'italic',

@@ -34,7 +34,7 @@ export const Builder = (props) => {
 
   return (
     <div style={styles.container}>
-      <h2>Build your "Q" then select Ready.</h2>
+      <h3>{props.title}</h3>
       <div className={css(styles.remaining)}>
         <h4 style={styles.remainingLabel}>
           General: <p>{state.remaining.General}</p>
@@ -109,7 +109,7 @@ export const Builder = (props) => {
       <hr />
       {state.q.filter((role) => role === '?').length === 0 && (
         <Button onClick={props.handleReadyClick} style={styles.readyButton} type="primary">
-          Ready
+          {props.buttonText}
         </Button>
       )}
     </div>
