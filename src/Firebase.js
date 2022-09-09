@@ -6,7 +6,16 @@ import {
   RecaptchaVerifier,
   signOut as firebaseSignOut,
 } from 'firebase/auth'
-import { getDoc, getFirestore, collection, doc, query, updateDoc, where } from 'firebase/firestore'
+import {
+  getDoc,
+  getFirestore,
+  collection,
+  doc,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
@@ -50,11 +59,15 @@ export const getFirebaseDoc = async (collectionName, id) => {
 export const docRefById = (collectionName, id) => doc(db, collectionName, id)
 
 // DB Helper Functions
-export const updateUsersTemplate = async (id, template) => {
-  const docRef = doc(db, 'users', id)
-  console.log('docRef', docRef)
-  console.log('id', id)
-  console.log('template', template)
+export const addUser = async (id, handle) =>
+  await setDoc(doc(db, 'users', id), {
+    handle,
+    role: 'user',
+    template: [],
+  })
 
-  return await updateDoc(docRef, { template })
-}
+export const updateUser = async (id, updatedFields) =>
+  await updateDoc(doc(db, 'users', id), updatedFields)
+
+export const updateUsersTemplate = async (id, template) =>
+  await updateDoc(doc(db, 'users', id), { template })

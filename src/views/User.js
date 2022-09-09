@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { auth, generateCaptcha, signIn, updateUsersTemplate } from '../Firebase'
+import {
+  addUser,
+  auth,
+  generateCaptcha,
+  getFirebaseDoc,
+  signIn,
+  updateUsersTemplate,
+} from '../Firebase'
 import { Builder } from './Builder'
 import dayjs from 'dayjs'
 
@@ -36,7 +43,13 @@ export const User = (props) => {
     }
     showOtp
       .confirm(otpValue)
-      .then((user) => {
+      .then(({ user }) => {
+        getFirebaseDoc('users', user.uid).then((snapshot) => {
+          if (!snapshot.exists()) {
+            // Create User model TODO, make sure this works
+            addUser(user.uid, user.phoneNumber)
+          }
+        })
         setOtpValue('')
         setShowOtp(null)
       })
