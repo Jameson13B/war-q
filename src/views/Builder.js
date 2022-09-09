@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from 'react'
-import { Button } from 'antd'
 import { css } from '@mxenabled/cssinjs'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
@@ -83,52 +82,53 @@ export const Builder = (props) => {
       <hr />
       {state.q.map((role, index) => (
         <div key={index} style={styles.row}>
-          <h3 style={styles.word}>{index + 1}:</h3>
           <h3 onClick={() => handleSelectRole('reset', index)} style={styles.word}>
             {role.slice(0, 3)}
           </h3>
-          <Button
-            onClick={() => handleSelectRole(ROLES.BOMB, index)}
-            style={styles.roleButton}
-            type={role === ROLES.BOMB ? 'primary' : 'default'}
-          >
-            B
-          </Button>
-          <Button
-            onClick={() => handleSelectRole(ROLES.TECH, index)}
-            style={styles.roleButton}
-            type={role === ROLES.TECH ? 'primary' : 'default'}
-          >
-            T
-          </Button>
-          <Button
-            onClick={() => handleSelectRole(ROLES.SCOUT, index)}
-            style={styles.roleButton}
-            type={role === ROLES.SCOUT ? 'primary' : 'default'}
-          >
-            S
-          </Button>
-          <Button
-            onClick={() => handleSelectRole(ROLES.CAPTAIN, index)}
-            style={styles.roleButton}
-            type={role === ROLES.CAPTAIN ? 'primary' : 'default'}
-          >
-            C
-          </Button>
-          <Button
-            onClick={() => handleSelectRole(ROLES.MAJOR, index)}
-            style={styles.roleButton}
-            type={role === ROLES.MAJOR ? 'primary' : 'default'}
-          >
-            M
-          </Button>
-          <Button
-            onClick={() => handleSelectRole(ROLES.GENERAL, index)}
-            style={styles.roleButton}
-            type={role === ROLES.GENERAL ? 'primary' : 'default'}
-          >
-            G
-          </Button>
+          <div style={styles.roleButtons}>
+            <button
+              className="btn"
+              onClick={() => handleSelectRole(ROLES.BOMB, index)}
+              style={role === ROLES.BOMB ? styles.selectedRoleButton : styles.roleButton}
+            >
+              B
+            </button>
+            <button
+              className="btn"
+              onClick={() => handleSelectRole(ROLES.TECH, index)}
+              style={role === ROLES.TECH ? styles.selectedRoleButton : styles.roleButton}
+            >
+              T
+            </button>
+            <button
+              className="btn"
+              onClick={() => handleSelectRole(ROLES.SCOUT, index)}
+              style={role === ROLES.SCOUT ? styles.selectedRoleButton : styles.roleButton}
+            >
+              S
+            </button>
+            <button
+              className="btn"
+              onClick={() => handleSelectRole(ROLES.CAPTAIN, index)}
+              style={role === ROLES.CAPTAIN ? styles.selectedRoleButton : styles.roleButton}
+            >
+              C
+            </button>
+            <button
+              className="btn"
+              onClick={() => handleSelectRole(ROLES.MAJOR, index)}
+              style={role === ROLES.MAJOR ? styles.selectedRoleButton : styles.roleButton}
+            >
+              M
+            </button>
+            <button
+              className="btn"
+              onClick={() => handleSelectRole(ROLES.GENERAL, index)}
+              style={role === ROLES.GENERAL ? styles.selectedRoleButton : styles.roleButton}
+            >
+              G
+            </button>
+          </div>
         </div>
       ))}
       <hr />
@@ -175,17 +175,32 @@ const getStyle = () => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  roleButtons: {
+    flexGrow: 1,
+  },
   word: {
     display: 'flex',
     alignItems: 'center',
     flexGrow: '1',
-    fontSize: '.8em',
+    fontSize: '.75em',
     marginBottom: '0',
   },
   roleButton: {
     fontSize: '.8em',
     marginLeft: 5,
-    padding: '4px 13px',
+    minHeight: 0,
+    minWidth: 0,
+    padding: '0px 10px',
+  },
+  selectedRoleButton: {
+    background: 'black',
+    borderRadius: '6px',
+    color: 'white',
+    fontSize: '.8em',
+    marginLeft: 5,
+    minHeight: 0,
+    minWidth: 0,
+    padding: '0px 10px',
   },
   readyButton: {
     width: '100%',
