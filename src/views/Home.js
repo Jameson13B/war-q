@@ -13,7 +13,7 @@ export const Home = (props) => {
       <h3>Best of luck out there.</h3>
       <br />
       <button disabled={!user} className="btn" onClick={props.handleStart} type="primary">
-        Start
+        {user ? 'Start' : 'Login to start'}
       </button>
       <br />
     </div>

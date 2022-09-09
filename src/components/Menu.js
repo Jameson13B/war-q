@@ -45,7 +45,10 @@ export const Menu = (props) => {
             <a onClick={props.onInstructionsClick}>Instructions</a>
           </li>
           <li role="menu-item">
-            <a onClick={() => alert('One More')}>About</a>
+            <a onClick={props.onGoAbout}>About</a>
+          </li>
+          <li role="menu-item">
+            <a onClick={props.onGoToAdmin}>Admin</a>
           </li>
         </ul>
       </li>

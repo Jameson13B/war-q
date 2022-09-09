@@ -1,19 +1,33 @@
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { Button } from 'antd'
 import { css } from '@mxenabled/cssinjs'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 
+import { auth, docRefById } from '../Firebase'
 import { ROLES } from '../const'
 
 export const Builder = (props) => {
-  const styles = getStyle()
+  const [user] = useAuthState(auth)
+  const doc = docRefById('users', user.uid)
+  const [snapshot, loading, error] = useDocumentOnce(doc)
   const [state, dispatch] = useReducer(reducer, {
     q: Array(20).fill('?'),
     remaining: { Tech: 5, Scout: 4, Captain: 3, Major: 2, General: 1, Bomb: 5 },
   })
+  const styles = getStyle()
+
+  useEffect(() => {
+    if (!loading) {
+      const template = snapshot.get('template')
+
+      if (template.length === 20) {
+        dispatch({ type: 'HANDLE_SET_TEMPLATE', payload: template })
+      }
+    }
+  }, [loading, snapshot])
 
   const handleSelectRole = (role, index) => {
-    if (role === '?') return () => {}
-
     const formattedRole = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
 
     if (state.remaining[formattedRole] < 1) {
@@ -21,20 +35,31 @@ export const Builder = (props) => {
     }
     const currentRole = state.q[index]
     // Update the remaining role count
-    const remaining = {
-      ...state.remaining,
-      [formattedRole]: state.remaining[formattedRole] - 1,
-      [currentRole]: state.remaining[currentRole] + 1,
+    let remaining
+    if (role === 'reset') {
+      const formattedRole = currentRole.charAt(0).toUpperCase() + currentRole.slice(1).toLowerCase()
+
+      remaining = {
+        ...state.remaining,
+        [formattedRole]: state.remaining[formattedRole] + 1,
+      }
+    } else {
+      remaining = {
+        ...state.remaining,
+        [formattedRole]: state.remaining[formattedRole] - 1,
+        [currentRole]: state.remaining[currentRole] + 1,
+      }
     }
     const newQ = [...state.q]
 
-    newQ[index] = role
+    newQ[index] = role === 'reset' ? '?' : role
     dispatch({ type: 'HANDLE_SELECT_ROLE', payload: { newQ, remaining } })
   }
 
   return (
     <div style={styles.container}>
       <h3>{props.title}</h3>
+      {error && <p style={styles.errorText}>Error loading template. Try again.</p>}
       <div className={css(styles.remaining)}>
         <h4 style={styles.remainingLabel}>
           General: <p>{state.remaining.General}</p>
@@ -59,7 +84,7 @@ export const Builder = (props) => {
       {state.q.map((role, index) => (
         <div key={index} style={styles.row}>
           <h3 style={styles.word}>{index + 1}:</h3>
-          <h3 onClick={() => handleSelectRole('?', index)} style={styles.word}>
+          <h3 onClick={() => handleSelectRole('reset', index)} style={styles.word}>
             {role.slice(0, 3)}
           </h3>
           <Button
@@ -108,9 +133,13 @@ export const Builder = (props) => {
       ))}
       <hr />
       {state.q.filter((role) => role === '?').length === 0 && (
-        <Button onClick={props.handleReadyClick} style={styles.readyButton} type="primary">
+        <button
+          className="btn"
+          onClick={() => props.handleReadyClick(state.q)}
+          style={styles.readyButton}
+        >
           {props.buttonText}
-        </Button>
+        </button>
       )}
     </div>
   )
@@ -118,6 +147,10 @@ export const Builder = (props) => {
 
 const getStyle = () => ({
   container: {},
+  errorText: {
+    color: 'red',
+    fontSize: '.75rem',
+  },
   remaining: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -166,6 +199,12 @@ const reducer = (state, action) => {
         ...state,
         q: action.payload.newQ,
         remaining: action.payload.remaining,
+      }
+    case 'HANDLE_SET_TEMPLATE':
+      return {
+        ...state,
+        q: action.payload,
+        remaining: { Tech: 0, Scout: 0, Captain: 0, Major: 0, General: 0, Bomb: 0 },
       }
     default:
       return state

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { auth, generateCaptcha, signIn } from '../Firebase'
+import { auth, generateCaptcha, signIn, updateUsersTemplate } from '../Firebase'
 import { Builder } from './Builder'
 import dayjs from 'dayjs'
 
@@ -70,7 +70,12 @@ export const User = (props) => {
           <p style={styles.joinedLabel}>Joined {dayjs(user.metadata.creationTime).fromNow()}</p>
           <Builder
             buttonText="Save"
-            handleReadyClick={() => alert('Save template')}
+            handleReadyClick={(template) => {
+              alert('Save template')
+              updateUsersTemplate(user.uid, template)
+                .then((res) => alert('Template saved!'))
+                .catch((err) => console.log(err))
+            }}
             title="Build your template"
           />
         </div>

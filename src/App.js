@@ -5,8 +5,11 @@ import { Battle } from './views/Battle'
 import { Builder } from './views/Builder'
 import { Home } from './views/Home'
 import { Instructions } from './views/Instructions'
+import { Lobby } from './views/Lobby'
 import { Summary } from './views/Summary'
 import { User } from './views/User'
+import { About } from './views/About'
+import { Admin } from './views/Admin'
 
 import { Menu } from './components/Menu'
 import { TitleBar } from './components/TitleBar'
@@ -15,17 +18,19 @@ const relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
 
 const VIEWS = {
+  ABOUT: 'ABOUT',
+  ADMIN: 'ADMIN',
   BATTLE: 'BATTLE',
   BUILDER: 'BUILDER',
   HOME: 'HOME',
   INSTRUCTIONS: 'INSTRUCTIONS',
+  LOBBY: 'LOBBY',
   SUMMARY: 'SUMMARY',
   USER: 'USER',
 }
 
 function App() {
   const [currentView, setCurrentView] = useState(VIEWS.HOME)
-  // const [currentUser, setCurrentUser] = useState(null)
   const styles = getStyles()
 
   const handleToggleDarkMode = () => alert('This will toggle dark/light mode.')
@@ -37,15 +42,20 @@ function App() {
         onToggleDarkMode={handleToggleDarkMode}
       />
       <Menu
+        onGoAbout={() => setCurrentView(VIEWS.ABOUT)}
+        onGoToAdmin={() => setCurrentView(VIEWS.ADMIN)}
         onHomeClick={() => setCurrentView(VIEWS.HOME)}
         onInstructionsClick={() => setCurrentView(VIEWS.INSTRUCTIONS)}
         onUserClick={(e) => {
           e.preventDefault()
           setCurrentView(VIEWS.USER)
         }}
-        // user={currentUser ? currentUser.attributes.username : 'User'}
       />
       <div className="window-pane">
+        {currentView === VIEWS.ABOUT && <About />}
+
+        {currentView === VIEWS.ADMIN && <Admin />}
+
         {currentView === VIEWS.BATTLE && (
           <Battle handleDoneClick={() => setCurrentView(VIEWS.SUMMARY)} />
         )}
@@ -53,7 +63,7 @@ function App() {
         {currentView === VIEWS.BUILDER && (
           <Builder
             buttonText="Ready"
-            handleReadyClick={() => setCurrentView(VIEWS.BATTLE)}
+            handleReadyClick={() => setCurrentView(VIEWS.LOBBY)}
             title='Build your "Q" then select Ready.'
           />
         )}
@@ -62,6 +72,13 @@ function App() {
 
         {currentView === VIEWS.INSTRUCTIONS && (
           <Instructions handleHome={() => setCurrentView(VIEWS.HOME)} />
+        )}
+
+        {currentView === VIEWS.LOBBY && (
+          <Lobby
+            onNewBattle={() => setCurrentView(VIEWS.BATTLE)}
+            onJoinBattle={() => setCurrentView(VIEWS.BATTLE)}
+          />
         )}
 
         {currentView === VIEWS.SUMMARY && (
@@ -85,7 +102,6 @@ const getStyles = () => ({
     maxWidth: 400,
     minWidth: 320,
     overflow: 'auto',
-    // padding: 15,
   },
   header: {
     display: 'flex',
