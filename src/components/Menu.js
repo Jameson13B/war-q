@@ -3,7 +3,7 @@
 import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { auth } from '../Firebase'
+import { auth, signOut } from '../Firebase'
 
 export const Menu = (props) => {
   const [user, loading, error] = useAuthState(auth)
@@ -33,7 +33,7 @@ export const Menu = (props) => {
           </li>
           {user && (
             <li role="menu-item">
-              <a onClick={() => alert('Logout')}>Logout</a>
+              <a onClick={() => signOut(auth)}>Logout</a>
             </li>
           )}
         </ul>
