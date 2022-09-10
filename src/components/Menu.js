@@ -2,17 +2,21 @@
 /* eslint-disable jsx-a11y/aria-role */
 import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 
-import { auth, signOut } from '../Firebase'
+import { auth, docRefById, signOut } from '../Firebase'
 
 export const Menu = (props) => {
   const [user, loading, error] = useAuthState(auth)
+  const [snapshot, userDataLoading] = useDocumentOnce(user ? docRefById('users', user.uid) : null)
 
   const userSecondary = () => {
     if (loading) {
       return 'Loading...'
     } else if (error) {
       return 'Error...'
+    } else if (!userDataLoading && snapshot?.get('handle')) {
+      return snapshot.get('handle')
     } else if (user) {
       return user.phoneNumber
     } else {
