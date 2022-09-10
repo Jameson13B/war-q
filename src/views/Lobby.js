@@ -13,12 +13,12 @@ export const Lobby = (props) => {
 
   const handleNewBattle = () => {
     FirestoreDB.addBattle(user.uid)
-      .then((res) => props.onNewBattle(res.id))
+      .then((res) => props.onNewBattle({ id: res.id, player: 'A' }))
       .catch((err) => console.log('err', err))
   }
   const handleJoinBatlle = (battleId) => {
     FirestoreDB.updateBattle(battleId, user.uid)
-      .then((res) => props.onJoinBattle(battleId))
+      .then((res) => props.onJoinBattle({ id: battleId, player: 'B' }))
       .catch((err) => console.log('err', err))
   }
 
@@ -48,26 +48,21 @@ export const Lobby = (props) => {
       {loading && <p>Loading...</p>}
       {!loading &&
         snapshot &&
-        snapshot.docs.map((doc) => {
-          console.log('doc', { id: doc.id, ...doc.data() })
-          return (
-            <button
-              className="btn"
-              key={doc.id}
-              onClick={() => handleJoinBatlle(doc.id)}
-              style={styles.battle}
-            >
-              <p>Battle: {doc.id}</p>
-              <p>Players: {doc.get('playerCount')}/2</p>
-              <p>
-                Started:{' '}
-                {doc.get('createdAt')
-                  ? dayjs(doc.get('createdAt').toDate()).fromNow()
-                  : 'Loading...'}
-              </p>
-            </button>
-          )
-        })}
+        snapshot.docs.map((doc) => (
+          <button
+            className="btn"
+            key={doc.id}
+            onClick={() => handleJoinBatlle(doc.id)}
+            style={styles.battle}
+          >
+            <p>Battle: {doc.id}</p>
+            <p>Players: {doc.get('playerCount')}/2</p>
+            <p>
+              Started:{' '}
+              {doc.get('createdAt') ? dayjs(doc.get('createdAt').toDate()).fromNow() : 'Loading...'}
+            </p>
+          </button>
+        ))}
     </div>
   )
 }

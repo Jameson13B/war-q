@@ -38,7 +38,7 @@ export const app = initializeApp(firebaseConfig)
  * Firestore Auth Service
  */
 export const auth = getAuth(app)
-export const FirestoreAuth = {
+export const FirebaseAuth = {
   generateCaptcha: () => {
     window.captcha = new RecaptchaVerifier(
       'captcha-button',
@@ -63,12 +63,12 @@ export const FirestoreDB = {
     return await getDoc(doc(db, 'users', userId)).then(async (doc) => {
       return await addDoc(collection(db, 'battles'), {
         createdAt: serverTimestamp(),
-        playerAId: userId,
-        playerAReady: false,
-        playerAQ: doc.get('template'),
-        playerBId: null,
-        playerBReady: false,
-        playerBQ: [],
+        APlayerId: userId,
+        APlayerReady: false,
+        APlayerQ: doc.get('template'),
+        BPlayerId: null,
+        BPlayerReady: false,
+        BPlayerQ: [],
         playerCount: 1,
         winner: null,
         loser: null,
