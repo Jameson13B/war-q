@@ -95,9 +95,12 @@ export const User = (props) => {
           <h2 style={styles.title}>Welcome {userDetails?.handle ?? user.phoneNumber.slice(2)}</h2>
           <p style={styles.joinedLabel}>Joined {dayjs(user.metadata.creationTime).fromNow()}</p>
           <p>
-            This area will have more details about your user/profile. You will be able to use the
-            form below to create a re-usable template.
+            This area will have more details about your user/profile. You can use the form below to
+            create a re-usable template.
           </p>
+          <h4>
+            <strong>W/L Ratio:</strong> *Coming Soon*
+          </h4>
           <hr />
           <hr />
           <Builder
@@ -108,7 +111,6 @@ export const User = (props) => {
                 .then((res) => alert('Template saved!'))
                 .catch((err) => console.log(err))
             }}
-            // title="Build your template"
           />
         </div>
       )}

@@ -74,19 +74,22 @@ export const addUser = async (id, handle) =>
     role: 'user',
     template: [],
   })
-export const addBattle = async (userId) =>
-  await addDoc(collection(db, 'battles'), {
-    createdAt: serverTimestamp(),
-    playerAId: userId,
-    playerAReady: false,
-    playerAQ: [],
-    playerBId: null,
-    playerBReady: false,
-    playerBQ: [],
-    playerCount: 1,
-    winner: null,
-    loser: null,
+export const addBattle = async (userId) => {
+  return await getDoc(doc(db, 'users', userId)).then(async (doc) => {
+    return await addDoc(collection(db, 'battles'), {
+      createdAt: serverTimestamp(),
+      playerAId: userId,
+      playerAReady: false,
+      playerAQ: doc.get('template'),
+      playerBId: null,
+      playerBReady: false,
+      playerBQ: [],
+      playerCount: 1,
+      winner: null,
+      loser: null,
+    })
   })
+}
 
 // Update Helper Functions
 export const updateUser = async (id, updatedFields) =>
