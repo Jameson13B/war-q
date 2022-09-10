@@ -12,7 +12,7 @@ import {
   doc,
   getDoc,
   getFirestore,
-  onSnapshot,
+  // onSnapshot,
   query,
   setDoc,
   serverTimestamp,
@@ -52,54 +52,42 @@ export const signOut = () => firebaseSignOut(auth)
 // Firestore/DB
 export const db = getFirestore(app)
 export const docRefById = (collectionName, id) => doc(db, collectionName, id)
-// GET Helper Functions
-export const getDocs = (collectionName, customQuery) =>
-  query(collection(db, collectionName), where(...customQuery))
-export const getFirebaseDoc = async (collectionName, id) => {
-  const docRef = doc(db, collectionName, id)
-  const docSnap = await getDoc(docRef)
 
-  return docSnap
-}
-export const subcribeToDoc = (collectionName, id) =>
-  onSnapshot(doc(db, collectionName, id), (doc) => {
-    console.log('doc', doc.data())
-  })
-export const subcribeToDocs = (collectionName) => onSnapshot(collection(db, collectionName))
-
-// Add Helper Functions
-export const addUser = async (id, handle) =>
-  await setDoc(doc(db, 'users', id), {
-    handle,
-    role: 'user',
-    template: [],
-  })
-export const addBattle = async (userId) => {
-  return await getDoc(doc(db, 'users', userId)).then(async (doc) => {
-    return await addDoc(collection(db, 'battles'), {
-      createdAt: serverTimestamp(),
-      playerAId: userId,
-      playerAReady: false,
-      playerAQ: doc.get('template'),
-      playerBId: null,
-      playerBReady: false,
-      playerBQ: [],
-      playerCount: 1,
-      winner: null,
-      loser: null,
+export const FirestoreDB = {
+  addBattle: async (userId) => {
+    return await getDoc(doc(db, 'users', userId)).then(async (doc) => {
+      return await addDoc(collection(db, 'battles'), {
+        createdAt: serverTimestamp(),
+        playerAId: userId,
+        playerAReady: false,
+        playerAQ: doc.get('template'),
+        playerBId: null,
+        playerBReady: false,
+        playerBQ: [],
+        playerCount: 1,
+        winner: null,
+        loser: null,
+      })
     })
-  })
+  },
+  addUser: async (id, handle) =>
+    await setDoc(doc(db, 'users', id), {
+      handle,
+      role: 'user',
+      template: [],
+    }),
+  getDoc: async (collectionName, id) => await getDoc(doc(db, collectionName, id)),
+  getDocs: (collectionName, customQuery) =>
+    query(collection(db, collectionName), where(...customQuery)),
+  // subcribeToDoc: (collectionName, id) =>
+  //   onSnapshot(doc(db, collectionName, id), (snapshot) => snapshot),
+  // subcribeToDocs: (collectionName) =>
+  //   onSnapshot(collection(db, collectionName), (snapshot) => snapshot),
+  updateBattle: async (battleId, userId) =>
+    await updateDoc(doc(db, 'battles', battleId), {
+      playerBId: userId,
+      playerCount: 2,
+    }),
+  updateUser: async (id, updatedFields) => await updateDoc(doc(db, 'users', id), updatedFields),
+  updateUsersTemplate: async (id, template) => await updateDoc(doc(db, 'users', id), { template }),
 }
-
-// Update Helper Functions
-export const updateUser = async (id, updatedFields) =>
-  await updateDoc(doc(db, 'users', id), updatedFields)
-
-export const updateUsersTemplate = async (id, template) =>
-  await updateDoc(doc(db, 'users', id), { template })
-
-export const updateBattle = async (battleId, userId) =>
-  await updateDoc(doc(db, 'battles', battleId), {
-    playerBId: userId,
-    playerCount: 2,
-  })

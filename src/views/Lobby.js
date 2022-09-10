@@ -3,19 +3,21 @@ import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollection } from 'react-firebase-hooks/firestore'
 
-import { addBattle, auth, getDocs, updateBattle } from '../Firebase'
+import { auth, FirestoreDB } from '../Firebase'
 
 export const Lobby = (props) => {
   const [user] = useAuthState(auth)
-  const [snapshot, loading] = useCollection(getDocs('battles', ['playerCount', '==', 1]))
+  const [snapshot, loading] = useCollection(
+    FirestoreDB.getDocs('battles', ['playerCount', '==', 1]),
+  )
 
   const handleNewBattle = () => {
-    addBattle(user.uid)
+    FirestoreDB.addBattle(user.uid)
       .then((res) => props.onNewBattle(res.id))
       .catch((err) => console.log('err', err))
   }
   const handleJoinBatlle = (battleId) => {
-    updateBattle(battleId, user.uid)
+    FirestoreDB.updateBattle(battleId, user.uid)
       .then((res) => props.onJoinBattle(battleId))
       .catch((err) => console.log('err', err))
   }

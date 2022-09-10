@@ -2,15 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
 
-import {
-  addUser,
-  auth,
-  db,
-  generateCaptcha,
-  getFirebaseDoc,
-  signIn,
-  updateUsersTemplate,
-} from '../Firebase'
+import { auth, db, FirestoreDB, generateCaptcha, signIn } from '../Firebase'
 import { Builder } from './Builder'
 import dayjs from 'dayjs'
 
@@ -57,9 +49,9 @@ export const User = (props) => {
     showOtp
       .confirm(otpValue)
       .then(({ user }) => {
-        getFirebaseDoc('users', user.uid).then((snapshot) => {
+        FirestoreDB.getDoc('users', user.uid).then((snapshot) => {
           if (!snapshot.exists()) {
-            addUser(user.uid, user.phoneNumber).then(() => console.log('successful'))
+            FirestoreDB.addUser(user.uid, user.phoneNumber).then(() => console.log('successful'))
           }
         })
         setOtpValue('')
@@ -107,7 +99,7 @@ export const User = (props) => {
             buttonText="Save"
             handleReadyClick={(template) => {
               alert('Save template')
-              updateUsersTemplate(user.uid, template)
+              FirestoreDB.updateUsersTemplate(user.uid, template)
                 .then((res) => alert('Template saved!'))
                 .catch((err) => console.log(err))
             }}
