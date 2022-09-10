@@ -4,7 +4,7 @@ import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 
-import { auth, docRefById, signOut } from '../Firebase'
+import { auth, docRefById, FirebaseAuth } from '../Firebase'
 
 export const Menu = (props) => {
   const [user, loading, error] = useAuthState(auth)
@@ -37,7 +37,7 @@ export const Menu = (props) => {
           </li>
           {user && (
             <li role="menu-item">
-              <a onClick={() => signOut(auth)}>Logout</a>
+              <a onClick={() => FirebaseAuth.signOut(auth)}>Logout</a>
             </li>
           )}
         </ul>

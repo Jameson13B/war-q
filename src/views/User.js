@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
 
-import { auth, db, FirestoreDB, generateCaptcha, signIn } from '../Firebase'
+import { auth, db, FirebaseAuth, FirestoreDB } from '../Firebase'
 import { Builder } from './Builder'
 import dayjs from 'dayjs'
 
@@ -15,7 +15,7 @@ export const User = (props) => {
   const styles = getStyles()
 
   useEffect(() => {
-    generateCaptcha()
+    FirebaseAuth.generateCaptcha()
   }, [user])
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export const User = (props) => {
     if (!phoneNumber) {
       return alert('Please enter your phone number.')
     }
-    signIn(phoneNumber)
+    FirebaseAuth.signIn(phoneNumber)
       .then((results) => {
         setPhoneNumber('')
         setShowOtp(results)

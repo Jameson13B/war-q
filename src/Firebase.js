@@ -34,22 +34,27 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig)
 
-// Auth
+/**
+ * Firestore Auth Service
+ */
 export const auth = getAuth(app)
-export const generateCaptcha = () => {
-  window.captcha = new RecaptchaVerifier(
-    'captcha-button',
-    {
-      size: 'invisible',
-    },
-    auth,
-  )
+export const FirestoreAuth = {
+  generateCaptcha: () => {
+    window.captcha = new RecaptchaVerifier(
+      'captcha-button',
+      {
+        size: 'invisible',
+      },
+      auth,
+    )
+  },
+  signIn: (phoneNumber) => signInWithPhoneNumber(auth, `+${phoneNumber}`, window.captcha),
+  signOut: () => firebaseSignOut(auth),
 }
-export const signIn = (phoneNumber) =>
-  signInWithPhoneNumber(auth, `+${phoneNumber}`, window.captcha)
-export const signOut = () => firebaseSignOut(auth)
 
-// Firestore/DB
+/**
+ * Firestore Databse Service
+ */
 export const db = getFirestore(app)
 export const docRefById = (collectionName, id) => doc(db, collectionName, id)
 

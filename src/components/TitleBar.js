@@ -1,5 +1,5 @@
 import React from 'react'
-import { signOut } from '../Firebase'
+import { FirebaseAuth } from '../Firebase'
 
 export const TitleBar = (props) => {
   return (
@@ -12,7 +12,7 @@ export const TitleBar = (props) => {
 
           // eslint-disable-next-line no-restricted-globals
           if (confirm('Are you sure you want to log out?')) {
-            signOut()
+            FirebaseAuth.signOut()
             props.handleGoHome()
           }
         }}
