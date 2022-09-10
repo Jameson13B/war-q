@@ -31,6 +31,7 @@ const VIEWS = {
 
 function App() {
   const [currentView, setCurrentView] = useState(VIEWS.HOME)
+  const [battleId, setBattleId] = useState(null)
   const styles = getStyles()
 
   const handleToggleDarkMode = () => alert('This will toggle dark/light mode.')
@@ -57,7 +58,7 @@ function App() {
         {currentView === VIEWS.ADMIN && <Admin />}
 
         {currentView === VIEWS.BATTLE && (
-          <Battle handleDoneClick={() => setCurrentView(VIEWS.SUMMARY)} />
+          <Battle battleId={battleId} handleDoneClick={() => setCurrentView(VIEWS.SUMMARY)} />
         )}
 
         {currentView === VIEWS.BUILDER && (
@@ -76,8 +77,14 @@ function App() {
 
         {currentView === VIEWS.LOBBY && (
           <Lobby
-            onNewBattle={() => setCurrentView(VIEWS.BATTLE)}
-            onJoinBattle={() => setCurrentView(VIEWS.BATTLE)}
+            onNewBattle={(id) => {
+              setBattleId(id)
+              setCurrentView(VIEWS.BATTLE)
+            }}
+            onJoinBattle={(id) => {
+              setBattleId(id)
+              setCurrentView(VIEWS.BATTLE)
+            }}
           />
         )}
 
