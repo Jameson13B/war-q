@@ -7,13 +7,15 @@ import {
   signOut as firebaseSignOut,
 } from 'firebase/auth'
 import {
-  getDoc,
-  getFirestore,
+  addDoc,
   collection,
   doc,
+  getDoc,
+  getFirestore,
   onSnapshot,
   query,
   setDoc,
+  serverTimestamp,
   updateDoc,
   where,
 } from 'firebase/firestore'
@@ -49,6 +51,8 @@ export const signOut = () => firebaseSignOut(auth)
 
 // Firestore/DB
 export const db = getFirestore(app)
+export const docRefById = (collectionName, id) => doc(db, collectionName, id)
+// GET Helper Functions
 export const getDocs = (collectionName, customQuery) =>
   query(collection(db, collectionName), where(...customQuery))
 export const getFirebaseDoc = async (collectionName, id) => {
@@ -57,25 +61,42 @@ export const getFirebaseDoc = async (collectionName, id) => {
 
   return docSnap
 }
-export const docRefById = (collectionName, id) => doc(db, collectionName, id)
 export const subcribeToDoc = (collectionName, id) =>
   onSnapshot(doc(db, collectionName, id), (doc) => {
     console.log('doc', doc.data())
   })
-// const unsub = onSnapshot(doc(db, 'cities', 'SF'), (doc) => {
-//   console.log('Current data: ', doc.data())
-// })
+export const subcribeToDocs = (collectionName) => onSnapshot(collection(db, collectionName))
 
-// DB Helper Functions
+// Add Helper Functions
 export const addUser = async (id, handle) =>
   await setDoc(doc(db, 'users', id), {
     handle,
     role: 'user',
     template: [],
   })
+export const addBattle = async (userId) =>
+  await addDoc(collection(db, 'battles'), {
+    createdAt: serverTimestamp(),
+    playerAId: userId,
+    playerAReady: false,
+    playerAQ: [],
+    playerBId: null,
+    playerBReady: false,
+    playerBQ: [],
+    playerCount: 1,
+    winner: null,
+    loser: null,
+  })
 
+// Update Helper Functions
 export const updateUser = async (id, updatedFields) =>
   await updateDoc(doc(db, 'users', id), updatedFields)
 
 export const updateUsersTemplate = async (id, template) =>
   await updateDoc(doc(db, 'users', id), { template })
+
+export const updateBattle = async (battleId, userId) =>
+  await updateDoc(doc(db, 'battles', battleId), {
+    playerBId: userId,
+    playerCount: 2,
+  })
