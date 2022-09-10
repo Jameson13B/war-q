@@ -20,7 +20,7 @@ export const Builder = (props) => {
     if (!loading) {
       const template = snapshot.get('template')
 
-      if (template.length === 20) {
+      if (template?.length === 20) {
         dispatch({ type: 'HANDLE_SET_TEMPLATE', payload: template })
       }
     }
@@ -57,7 +57,7 @@ export const Builder = (props) => {
 
   return (
     <div style={styles.container}>
-      <h3>{props.title}</h3>
+      {props.title && <h3>{props.title}</h3>}
       {error && <p style={styles.errorText}>Error loading template. Try again.</p>}
       <div className={css(styles.remaining)}>
         <h4 style={styles.remainingLabel}>
@@ -80,6 +80,7 @@ export const Builder = (props) => {
         </h4>
       </div>
       <hr />
+      <h5 style={styles.helpText}>Click label on left below to change.</h5>
       {state.q.map((role, index) => (
         <div key={index} style={styles.row}>
           <h3 onClick={() => handleSelectRole('reset', index)} style={styles.word}>
@@ -169,7 +170,13 @@ const getStyle = () => ({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
+    fontSize: '.8rem',
     width: '32%',
+  },
+  helpText: {
+    textAlign: 'center',
+    color: 'darkgray',
+    fontSize: '.8rem',
   },
   row: {
     display: 'flex',
