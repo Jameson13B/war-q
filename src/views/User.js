@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { doc, onSnapshot } from 'firebase/firestore'
 
 import {
   addUser,
   auth,
+  db,
   generateCaptcha,
   getFirebaseDoc,
   signIn,
@@ -14,6 +16,7 @@ import dayjs from 'dayjs'
 
 export const User = (props) => {
   const [user] = useAuthState(auth)
+  const [userDetails, setUserDetails] = useState(null)
   const [showOtp, setShowOtp] = useState(null)
   const [phoneNumber, setPhoneNumber] = useState('')
   const [otpValue, setOtpValue] = useState('')
@@ -21,7 +24,17 @@ export const User = (props) => {
 
   useEffect(() => {
     generateCaptcha()
-  }, [])
+  }, [user])
+
+  useEffect(() => {
+    if (!user) return () => {}
+
+    const unsub = onSnapshot(doc(db, 'users', user.uid), (doc) =>
+      setUserDetails({ id: doc.id, ...doc.data() }),
+    )
+
+    return () => unsub()
+  }, [user])
 
   const handleLogin = (e) => {
     e.preventDefault()
@@ -46,8 +59,7 @@ export const User = (props) => {
       .then(({ user }) => {
         getFirebaseDoc('users', user.uid).then((snapshot) => {
           if (!snapshot.exists()) {
-            // Create User model TODO, make sure this works
-            addUser(user.uid, user.phoneNumber)
+            addUser(user.uid, user.phoneNumber).then(() => console.log('successful'))
           }
         })
         setOtpValue('')
@@ -62,6 +74,7 @@ export const User = (props) => {
         <h1>Enter code we sent you.</h1>
         <form autoComplete="off" onSubmit={handleOtp}>
           <input
+            autoFocus={showOtp}
             onChange={(event) => setOtpValue(event.target.value)}
             placeholder="Password"
             style={styles.input}
@@ -79,8 +92,14 @@ export const User = (props) => {
     <div style={styles.container}>
       {user && (
         <div>
-          <h2 style={styles.title}>Welcome {user.phoneNumber.slice(2)}</h2>
+          <h2 style={styles.title}>Welcome {userDetails?.handle ?? user.phoneNumber.slice(2)}</h2>
           <p style={styles.joinedLabel}>Joined {dayjs(user.metadata.creationTime).fromNow()}</p>
+          <p>
+            This area will have more details about your user/profile. You will be able to use the
+            form below to create a re-usable template.
+          </p>
+          <hr />
+          <hr />
           <Builder
             buttonText="Save"
             handleReadyClick={(template) => {
@@ -89,7 +108,7 @@ export const User = (props) => {
                 .then((res) => alert('Template saved!'))
                 .catch((err) => console.log(err))
             }}
-            title="Build your template"
+            // title="Build your template"
           />
         </div>
       )}
@@ -123,8 +142,9 @@ const getStyles = () => ({
     fontSize: '1.5em',
   },
   joinedLabel: {
-    marginBottom: 10,
+    fontSize: '.8rem',
     fontStyle: 'italic',
+    marginBottom: 10,
   },
   input: {
     marginBottom: 20,

@@ -11,6 +11,7 @@ import {
   getFirestore,
   collection,
   doc,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -47,7 +48,7 @@ export const signIn = (phoneNumber) =>
 export const signOut = () => firebaseSignOut(auth)
 
 // Firestore/DB
-const db = getFirestore(app)
+export const db = getFirestore(app)
 export const getDocs = (collectionName, customQuery) =>
   query(collection(db, collectionName), where(...customQuery))
 export const getFirebaseDoc = async (collectionName, id) => {
@@ -57,6 +58,13 @@ export const getFirebaseDoc = async (collectionName, id) => {
   return docSnap
 }
 export const docRefById = (collectionName, id) => doc(db, collectionName, id)
+export const subcribeToDoc = (collectionName, id) =>
+  onSnapshot(doc(db, collectionName, id), (doc) => {
+    console.log('doc', doc.data())
+  })
+// const unsub = onSnapshot(doc(db, 'cities', 'SF'), (doc) => {
+//   console.log('Current data: ', doc.data())
+// })
 
 // DB Helper Functions
 export const addUser = async (id, handle) =>
