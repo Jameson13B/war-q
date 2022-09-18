@@ -12,7 +12,7 @@ import {
   doc,
   getDoc,
   getFirestore,
-  // onSnapshot,
+  onSnapshot,
   query,
   setDoc,
   serverTimestamp,
@@ -56,8 +56,6 @@ export const FirebaseAuth = {
  * Firestore Databse Service
  */
 export const db = getFirestore(app)
-export const docRefById = (collectionName, id) => doc(db, collectionName, id)
-
 export const FirestoreDB = {
   addBattle: async (userId) => {
     return await getDoc(doc(db, 'users', userId)).then(async (doc) => {
@@ -84,9 +82,9 @@ export const FirestoreDB = {
   getDoc: async (collectionName, id) => await getDoc(doc(db, collectionName, id)),
   getDocs: (collectionName, customQuery) =>
     query(collection(db, collectionName), where(...customQuery)),
-  // subcribeToDoc: (collectionName, id) =>
-  //   onSnapshot(doc(db, collectionName, id), (snapshot) => snapshot),
-  // subcribeToDocs: (collectionName) =>
+  subcribeToDoc: (collectionName, id, callback) =>
+    onSnapshot(doc(db, collectionName, id), callback),
+  // subcribeToDocs: (collectionName, callback) =>
   //   onSnapshot(collection(db, collectionName), (snapshot) => snapshot),
   updateBattle: async (battleId, userId) =>
     await updateDoc(doc(db, 'battles', battleId), {

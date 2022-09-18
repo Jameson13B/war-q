@@ -1,22 +1,31 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/aria-role */
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 
-import { auth, docRefById, FirebaseAuth } from '../Firebase'
+import { auth, FirebaseAuth, FirestoreDB } from '../Firebase'
 
 export const Menu = (props) => {
   const [user, loading, error] = useAuthState(auth)
-  const [snapshot, userDataLoading] = useDocumentOnce(user ? docRefById('users', user.uid) : null)
+  const [userDetails, setUserDetails] = useState(null)
+
+  useEffect(() => {
+    if (!user) return () => {}
+
+    const unsub = FirestoreDB.subcribeToDoc('users', user.uid, (doc) =>
+      setUserDetails({ id: doc.id, ...doc.data() }),
+    )
+
+    return () => unsub()
+  }, [user])
 
   const userSecondary = () => {
     if (loading) {
       return 'Loading...'
     } else if (error) {
       return 'Error...'
-    } else if (!userDataLoading && snapshot?.get('handle')) {
-      return snapshot.get('handle')
+    } else if (!loading && userDetails?.handle) {
+      return userDetails.handle
     } else if (user) {
       return user.phoneNumber
     } else {

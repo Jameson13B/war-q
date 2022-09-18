@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { doc, onSnapshot } from 'firebase/firestore'
 
-import { auth, db, FirebaseAuth, FirestoreDB } from '../Firebase'
+import { auth, FirebaseAuth, FirestoreDB } from '../Firebase'
 import { Builder } from './Builder'
 import dayjs from 'dayjs'
 
@@ -21,7 +20,7 @@ export const User = (props) => {
   useEffect(() => {
     if (!user) return () => {}
 
-    const unsub = onSnapshot(doc(db, 'users', user.uid), (doc) =>
+    const unsub = FirestoreDB.subcribeToDoc('users', user.uid, (doc) =>
       setUserDetails({ id: doc.id, ...doc.data() }),
     )
 

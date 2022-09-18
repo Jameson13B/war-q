@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { doc, onSnapshot } from 'firebase/firestore'
 
-import { db } from '../Firebase'
+import { FirestoreDB } from '../Firebase'
 
 export const Battle = (props) => {
   const [currentView] = useState('GET READY')
@@ -9,7 +8,7 @@ export const Battle = (props) => {
   const styles = getStyles()
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, 'battles', props.battle.id), (doc) =>
+    const unsub = FirestoreDB.subscribeToDoc('battles', props.battle.id, (doc) =>
       setBattleDetails({ id: doc.id, ...doc.data() }),
     )
 

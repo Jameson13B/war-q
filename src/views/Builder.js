@@ -1,30 +1,35 @@
 import React, { useEffect, useReducer } from 'react'
 import { css } from '@mxenabled/cssinjs'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 
-import { auth, docRefById } from '../Firebase'
+import { auth, FirestoreDB } from '../Firebase'
 import { ROLES } from '../const'
 
 export const Builder = (props) => {
   const [user] = useAuthState(auth)
-  const doc = docRefById('users', user.uid)
-  const [snapshot, loading, error] = useDocumentOnce(doc)
   const [state, dispatch] = useReducer(reducer, {
     q: Array(20).fill('?'),
     remaining: { Tech: 5, Scout: 4, Captain: 3, Major: 2, General: 1, Bomb: 5 },
+    userDetails: null,
   })
   const styles = getStyle()
 
   useEffect(() => {
-    if (!loading) {
-      const template = snapshot.get('template')
+    if (!user) return () => {}
+
+    const unsub = FirestoreDB.subcribeToDoc('users', user.uid, (doc) => {
+      const template = doc.data().template
 
       if (template?.length === 20) {
-        dispatch({ type: 'HANDLE_SET_TEMPLATE', payload: template })
+        dispatch({
+          type: 'HANDLE_SET_TEMPLATE_AND_USER',
+          payload: { id: doc.id, ...doc.data() },
+        })
       }
-    }
-  }, [loading, snapshot])
+    })
+
+    return () => unsub()
+  }, [user])
 
   const handleSelectRole = (role, index) => {
     const formattedRole = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
@@ -58,7 +63,6 @@ export const Builder = (props) => {
   return (
     <div style={styles.container}>
       {props.title && <h3>{props.title}</h3>}
-      {error && <p style={styles.errorText}>Error loading template. Try again.</p>}
       <div className={css(styles.remaining)}>
         <h4 style={styles.remainingLabel}>
           General: <p>{state.remaining.General}</p>
@@ -148,10 +152,6 @@ export const Builder = (props) => {
 
 const getStyle = () => ({
   container: {},
-  errorText: {
-    color: 'red',
-    fontSize: '.75rem',
-  },
   remaining: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -222,11 +222,16 @@ const reducer = (state, action) => {
         q: action.payload.newQ,
         remaining: action.payload.remaining,
       }
-    case 'HANDLE_SET_TEMPLATE':
+    case 'HANDLE_SET_TEMPLATE_AND_USER':
       return {
         ...state,
-        q: action.payload,
+        q: action.payload.template,
         remaining: { Tech: 0, Scout: 0, Captain: 0, Major: 0, General: 0, Bomb: 0 },
+      }
+    case 'HANDLE_SET_USER_DETAILS':
+      return {
+        ...state,
+        userDetails: action.payload,
       }
     default:
       return state
