@@ -17,7 +17,7 @@ export const Builder = (props) => {
   useEffect(() => {
     if (!user) return () => {}
 
-    const unsub = FirestoreDB.subcribeToDoc('users', user.uid, (doc) => {
+    const unsub = FirestoreDB.subscribeToDoc('users', user.uid, (doc) => {
       const template = doc.data().template
 
       if (template?.length === 20) {

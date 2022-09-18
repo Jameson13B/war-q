@@ -32,7 +32,9 @@ export const Battle = (props) => {
         >
           Ready Up!
         </button>
+
         <hr />
+
         <div style={styles.readyUpSection}>
           <div style={styles.playerASection}>
             <div style={aStyles}>
@@ -45,6 +47,7 @@ export const Battle = (props) => {
               ))}
             </ul>
           </div>
+
           <div style={styles.playerBSection}>
             <div style={bStyles}>
               <h3>{battleDetails?.BPlayerId || 'Looking...'}</h3>

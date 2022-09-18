@@ -46,6 +46,7 @@ export const Lobby = (props) => {
       <p>Players waiting:</p>
       {/* Existing Battles */}
       {loading && <p>Loading...</p>}
+      {!loading && !snapshot.length && <p>No open battles. Start a new one.</p>}
       {!loading &&
         snapshot &&
         snapshot.docs.map((doc) => (

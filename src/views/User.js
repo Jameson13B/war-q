@@ -20,7 +20,7 @@ export const User = (props) => {
   useEffect(() => {
     if (!user) return () => {}
 
-    const unsub = FirestoreDB.subcribeToDoc('users', user.uid, (doc) =>
+    const unsub = FirestoreDB.subscribeToDoc('users', user.uid, (doc) =>
       setUserDetails({ id: doc.id, ...doc.data() }),
     )
 
@@ -85,10 +85,7 @@ export const User = (props) => {
         <div>
           <h2 style={styles.title}>Welcome {userDetails?.handle ?? user.phoneNumber.slice(2)}</h2>
           <p style={styles.joinedLabel}>Joined {dayjs(user.metadata.creationTime).fromNow()}</p>
-          <p>
-            This area will have more details about your user/profile. You can use the form below to
-            create a re-usable template.
-          </p>
+          <p>You can use the form below to create a re-usable template.</p>
           <h4>
             <strong>W/L Ratio:</strong> *Coming Soon*
           </h4>

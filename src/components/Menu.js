@@ -12,7 +12,7 @@ export const Menu = (props) => {
   useEffect(() => {
     if (!user) return () => {}
 
-    const unsub = FirestoreDB.subcribeToDoc('users', user.uid, (doc) =>
+    const unsub = FirestoreDB.subscribeToDoc('users', user.uid, (doc) =>
       setUserDetails({ id: doc.id, ...doc.data() }),
     )
 

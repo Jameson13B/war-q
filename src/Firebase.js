@@ -82,9 +82,9 @@ export const FirestoreDB = {
   getDoc: async (collectionName, id) => await getDoc(doc(db, collectionName, id)),
   getDocs: (collectionName, customQuery) =>
     query(collection(db, collectionName), where(...customQuery)),
-  subcribeToDoc: (collectionName, id, callback) =>
+  subscribeToDoc: (collectionName, id, callback) =>
     onSnapshot(doc(db, collectionName, id), callback),
-  // subcribeToDocs: (collectionName, callback) =>
+  // subscribeToDocs: (collectionName, callback) =>
   //   onSnapshot(collection(db, collectionName), (snapshot) => snapshot),
   updateBattle: async (battleId, userId) =>
     await updateDoc(doc(db, 'battles', battleId), {
